@@ -20,7 +20,7 @@ namespace LightWebBrowser
             webBrowser1.ScriptErrorsSuppressed = true; // منع أخطاء السكريبت تظهر
             webBrowser1.ProgressChanged += WebBrowser1_ProgressChanged;
             webBrowser1.Navigated += WebBrowser1_Navigated;
-            webBrowser1.DocumentTitleChanged += WebBrowser1_DocumentTitleChanged;
+            webBrowser1.DocumentTitleChanged += webBrowser1_DocumentTitleChanged;
             LoadBookmarks();
             UpdateBookmarksList();
         }
