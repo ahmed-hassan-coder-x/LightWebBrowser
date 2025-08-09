@@ -173,7 +173,7 @@ namespace LightWebBrowser
             }
         }
 
-        private void WebBrowser1_DocumentTitleChanged(object sender, EventArgs e)
+        private void webBrowser1_DocumentTitleChanged(object sender, EventArgs e)
         {
             this.Text = webBrowser1.DocumentTitle + " - Light Web Browser";
         }
