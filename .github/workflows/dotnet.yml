@@ -20,6 +20,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1
+
       - name: Setup NuGet CLI
         uses: NuGet/setup-nuget@v1
 
