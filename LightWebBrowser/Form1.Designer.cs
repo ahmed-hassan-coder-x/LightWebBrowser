@@ -9,6 +9,9 @@ namespace LightWebBrowser
         private System.Windows.Forms.Button btnBack;
         private System.Windows.Forms.Button btnForward;
         private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.Button btnHome;
+        private System.Windows.Forms.Button btnBookmark;
+        private System.Windows.Forms.Button btnSettings;
         private System.Windows.Forms.WebBrowser webBrowser1;
 
         protected override void Dispose(bool disposing)
@@ -27,6 +30,9 @@ namespace LightWebBrowser
             this.btnBack = new System.Windows.Forms.Button();
             this.btnForward = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
+            this.btnHome = new System.Windows.Forms.Button();
+            this.btnBookmark = new System.Windows.Forms.Button();
+            this.btnSettings = new System.Windows.Forms.Button();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.SuspendLayout();
             // 
@@ -81,6 +87,36 @@ namespace LightWebBrowser
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
+            // btnHome
+            // 
+            this.btnHome.Location = new System.Drawing.Point(255, 40);
+            this.btnHome.Name = "btnHome";
+            this.btnHome.Size = new System.Drawing.Size(75, 27);
+            this.btnHome.TabIndex = 5;
+            this.btnHome.Text = "Home";
+            this.btnHome.UseVisualStyleBackColor = true;
+            this.btnHome.Click += new System.EventHandler(this.btnHome_Click);
+            // 
+            // btnBookmark
+            // 
+            this.btnBookmark.Location = new System.Drawing.Point(336, 40);
+            this.btnBookmark.Name = "btnBookmark";
+            this.btnBookmark.Size = new System.Drawing.Size(75, 27);
+            this.btnBookmark.TabIndex = 6;
+            this.btnBookmark.Text = "Bookmark";
+            this.btnBookmark.UseVisualStyleBackColor = true;
+            this.btnBookmark.Click += new System.EventHandler(this.btnBookmark_Click);
+            // 
+            // btnSettings
+            // 
+            this.btnSettings.Location = new System.Drawing.Point(417, 40);
+            this.btnSettings.Name = "btnSettings";
+            this.btnSettings.Size = new System.Drawing.Size(75, 27);
+            this.btnSettings.TabIndex = 7;
+            this.btnSettings.Text = "Settings";
+            this.btnSettings.UseVisualStyleBackColor = true;
+            this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
+            // 
             // webBrowser1
             // 
             this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -90,13 +126,16 @@ namespace LightWebBrowser
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
             this.webBrowser1.Size = new System.Drawing.Size(656, 365);
-            this.webBrowser1.TabIndex = 5;
+            this.webBrowser1.TabIndex = 8;
             this.webBrowser1.DocumentTitleChanged += new System.EventHandler(this.webBrowser1_DocumentTitleChanged);
             // 
             // Form1
             // 
             this.ClientSize = new System.Drawing.Size(680, 450);
             this.Controls.Add(this.webBrowser1);
+            this.Controls.Add(this.btnSettings);
+            this.Controls.Add(this.btnBookmark);
+            this.Controls.Add(this.btnHome);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.btnForward);
             this.Controls.Add(this.btnBack);
@@ -107,7 +146,6 @@ namespace LightWebBrowser
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
     }
 }
