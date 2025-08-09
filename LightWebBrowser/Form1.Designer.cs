@@ -9,9 +9,13 @@ namespace LightWebBrowser
         private System.Windows.Forms.Button btnBack;
         private System.Windows.Forms.Button btnForward;
         private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.Button btnHome;
         private System.Windows.Forms.Button btnBookmark;
+        private System.Windows.Forms.Button btnRemoveBookmark;
         private System.Windows.Forms.Button btnSettings;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.ListBox listBoxBookmarks;
         private System.Windows.Forms.WebBrowser webBrowser1;
 
         protected override void Dispose(bool disposing)
@@ -30,9 +34,13 @@ namespace LightWebBrowser
             this.btnBack = new System.Windows.Forms.Button();
             this.btnForward = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
+            this.btnStop = new System.Windows.Forms.Button();
             this.btnHome = new System.Windows.Forms.Button();
             this.btnBookmark = new System.Windows.Forms.Button();
+            this.btnRemoveBookmark = new System.Windows.Forms.Button();
             this.btnSettings = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.listBoxBookmarks = new System.Windows.Forms.ListBox();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.SuspendLayout();
             // 
@@ -87,55 +95,99 @@ namespace LightWebBrowser
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
+            // btnStop
+            // 
+            this.btnStop.Location = new System.Drawing.Point(255, 40);
+            this.btnStop.Name = "btnStop";
+            this.btnStop.Size = new System.Drawing.Size(75, 27);
+            this.btnStop.TabIndex = 5;
+            this.btnStop.Text = "Stop";
+            this.btnStop.UseVisualStyleBackColor = true;
+            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
+            // 
             // btnHome
             // 
-            this.btnHome.Location = new System.Drawing.Point(255, 40);
+            this.btnHome.Location = new System.Drawing.Point(336, 40);
             this.btnHome.Name = "btnHome";
             this.btnHome.Size = new System.Drawing.Size(75, 27);
-            this.btnHome.TabIndex = 5;
+            this.btnHome.TabIndex = 6;
             this.btnHome.Text = "Home";
             this.btnHome.UseVisualStyleBackColor = true;
             this.btnHome.Click += new System.EventHandler(this.btnHome_Click);
             // 
             // btnBookmark
             // 
-            this.btnBookmark.Location = new System.Drawing.Point(336, 40);
+            this.btnBookmark.Location = new System.Drawing.Point(417, 40);
             this.btnBookmark.Name = "btnBookmark";
             this.btnBookmark.Size = new System.Drawing.Size(75, 27);
-            this.btnBookmark.TabIndex = 6;
+            this.btnBookmark.TabIndex = 7;
             this.btnBookmark.Text = "Bookmark";
             this.btnBookmark.UseVisualStyleBackColor = true;
             this.btnBookmark.Click += new System.EventHandler(this.btnBookmark_Click);
             // 
+            // btnRemoveBookmark
+            // 
+            this.btnRemoveBookmark.Location = new System.Drawing.Point(498, 40);
+            this.btnRemoveBookmark.Name = "btnRemoveBookmark";
+            this.btnRemoveBookmark.Size = new System.Drawing.Size(100, 27);
+            this.btnRemoveBookmark.TabIndex = 8;
+            this.btnRemoveBookmark.Text = "Remove Bookmark";
+            this.btnRemoveBookmark.UseVisualStyleBackColor = true;
+            this.btnRemoveBookmark.Click += new System.EventHandler(this.btnRemoveBookmark_Click);
+            // 
             // btnSettings
             // 
-            this.btnSettings.Location = new System.Drawing.Point(417, 40);
+            this.btnSettings.Location = new System.Drawing.Point(604, 40);
             this.btnSettings.Name = "btnSettings";
-            this.btnSettings.Size = new System.Drawing.Size(75, 27);
-            this.btnSettings.TabIndex = 7;
+            this.btnSettings.Size = new System.Drawing.Size(64, 27);
+            this.btnSettings.TabIndex = 9;
             this.btnSettings.Text = "Settings";
             this.btnSettings.UseVisualStyleBackColor = true;
             this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                                    | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar1.Location = new System.Drawing.Point(12, 73);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(656, 10);
+            this.progressBar1.TabIndex = 10;
+            // 
+            // listBoxBookmarks
+            // 
+            this.listBoxBookmarks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBoxBookmarks.FormattingEnabled = true;
+            this.listBoxBookmarks.ItemHeight = 16;
+            this.listBoxBookmarks.Location = new System.Drawing.Point(674, 12);
+            this.listBoxBookmarks.Name = "listBoxBookmarks";
+            this.listBoxBookmarks.Size = new System.Drawing.Size(300, 404);
+            this.listBoxBookmarks.TabIndex = 11;
+            this.listBoxBookmarks.DoubleClick += new System.EventHandler(this.listBoxBookmarks_DoubleClick);
             // 
             // webBrowser1
             // 
             this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                                     | System.Windows.Forms.AnchorStyles.Left)
                                     | System.Windows.Forms.AnchorStyles.Right)));
-            this.webBrowser1.Location = new System.Drawing.Point(12, 73);
+            this.webBrowser1.Location = new System.Drawing.Point(12, 89);
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(656, 365);
-            this.webBrowser1.TabIndex = 8;
+            this.webBrowser1.Size = new System.Drawing.Size(656, 349);
+            this.webBrowser1.TabIndex = 12;
             this.webBrowser1.DocumentTitleChanged += new System.EventHandler(this.webBrowser1_DocumentTitleChanged);
             // 
             // Form1
             // 
-            this.ClientSize = new System.Drawing.Size(680, 450);
+            this.ClientSize = new System.Drawing.Size(986, 450);
             this.Controls.Add(this.webBrowser1);
+            this.Controls.Add(this.listBoxBookmarks);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.btnSettings);
+            this.Controls.Add(this.btnRemoveBookmark);
             this.Controls.Add(this.btnBookmark);
             this.Controls.Add(this.btnHome);
+            this.Controls.Add(this.btnStop);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.btnForward);
             this.Controls.Add(this.btnBack);
@@ -144,6 +196,7 @@ namespace LightWebBrowser
             this.Name = "Form1";
             this.Text = "Light Web Browser";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
         }
