@@ -33,13 +33,14 @@ jobs:
         run: msbuild "LightWebBrowser.sln" /p:Configuration=Release /p:Platform="Any CPU"
 
       - name: Show build output (for debugging)
+        shell: powershell
         run: |
-          if exist "LightWebBrowser\bin\Release" (
-            dir "LightWebBrowser\bin\Release"
-          ) else (
-            echo "Release folder not found. Listing entire repo for debugging:"
-            dir
-          )
+          if (Test-Path "LightWebBrowser\bin\Release") {
+            Get-ChildItem "LightWebBrowser\bin\Release"
+          } else {
+            Write-Host "Release folder not found. Listing entire repo for debugging:"
+            Get-ChildItem
+          }
 
       - name: Publish build artifacts
         if: success()
