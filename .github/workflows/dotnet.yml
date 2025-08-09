@@ -32,11 +32,20 @@ jobs:
       - name: Build solution (Release)
         run: msbuild "LightWebBrowser.sln" /p:Configuration=Release /p:Platform="Any CPU"
 
+      - name: Get Git short hash
+        id: vars
+        run: echo "SHORT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Rename Release folder to git short hash
+        run: |
+          Rename-Item -Path "LightWebBrowser\bin\Release" -NewName $env:SHORT_HASH
+        shell: powershell
+
       - name: Show build output (for debugging)
         shell: powershell
         run: |
-          if (Test-Path "LightWebBrowser\bin\Release") {
-            Get-ChildItem "LightWebBrowser\bin\Release"
+          if (Test-Path "LightWebBrowser\bin\$env:SHORT_HASH") {
+            Get-ChildItem "LightWebBrowser\bin\$env:SHORT_HASH"
           } else {
             Write-Host "Release folder not found. Listing entire repo for debugging:"
             Get-ChildItem
@@ -46,6 +55,5 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: LightWebBrowser-Build
-          path: |
-            LightWebBrowser\bin\Release\
+          name: LightWebBrowser-Build-${{ env.SHORT_HASH }}
+          path: LightWebBrowser\bin\$env:SHORT_HASH\
