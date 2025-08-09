@@ -40,9 +40,9 @@ jobs:
         shell: pwsh
         run: |
           $oldPath = "LightWebBrowser\bin\Release\net48\LightWebBrowser.exe"
-          $newPath = "LightWebBrowser\bin\Release\net48\LightWebBrowser-$env:SHORT_HASH.exe"
+          $newName = "LightWebBrowser-$env:SHORT_HASH.exe"
           if (Test-Path $oldPath) {
-            Rename-Item -Path $oldPath -NewName ("LightWebBrowser-" + $env:SHORT_HASH + ".exe")
+            Rename-Item -Path $oldPath -NewName $newName
           } else {
             Write-Host "Executable not found at $oldPath"
             exit 1
@@ -56,5 +56,5 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: LightWebBrowser-Build-$SHORT_HASH
+          name: LightWebBrowser-Build-${{ env.SHORT_HASH }}
           path: LightWebBrowser\bin\Release\net48\
