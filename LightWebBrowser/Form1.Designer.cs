@@ -3,7 +3,6 @@ namespace LightWebBrowser
     partial class Form1
     {
         private System.ComponentModel.IContainer components = null;
-
         private System.Windows.Forms.TextBox txtUrl;
         private System.Windows.Forms.Button btnGo;
         private System.Windows.Forms.Button btnBack;
