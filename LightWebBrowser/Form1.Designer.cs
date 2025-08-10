@@ -12,8 +12,6 @@ namespace LightWebBrowser
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.Button btnHome;
-        private System.Windows.Forms.Button btnBookmark;
-        private System.Windows.Forms.Button btnRemoveBookmark;
         private System.Windows.Forms.Button btnSettings;
         private System.Windows.Forms.ProgressBar progressBar1;
         private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
@@ -114,26 +112,6 @@ namespace LightWebBrowser
             this.btnHome.Text = "Home";
             this.btnHome.UseVisualStyleBackColor = true;
             this.btnHome.Click += new System.EventHandler(this.btnHome_Click);
-            // 
-            // btnBookmark
-            // 
-            this.btnBookmark.Location = new System.Drawing.Point(417, 40);
-            this.btnBookmark.Name = "btnBookmark";
-            this.btnBookmark.Size = new System.Drawing.Size(75, 27);
-            this.btnBookmark.TabIndex = 7;
-            this.btnBookmark.Text = "Bookmark";
-            this.btnBookmark.UseVisualStyleBackColor = true;
-            this.btnBookmark.Click += new System.EventHandler(this.btnBookmark_Click);
-            // 
-            // btnRemoveBookmark
-            // 
-            this.btnRemoveBookmark.Location = new System.Drawing.Point(498, 40);
-            this.btnRemoveBookmark.Name = "btnRemoveBookmark";
-            this.btnRemoveBookmark.Size = new System.Drawing.Size(100, 27);
-            this.btnRemoveBookmark.TabIndex = 8;
-            this.btnRemoveBookmark.Text = "Remove Bookmark";
-            this.btnRemoveBookmark.UseVisualStyleBackColor = true;
-            this.btnRemoveBookmark.Click += new System.EventHandler(this.btnRemoveBookmark_Click);
             // 
             // btnSettings
             // 
