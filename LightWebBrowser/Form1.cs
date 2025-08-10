@@ -18,8 +18,6 @@ namespace LightWebBrowser
         public Form1()
         {
             InitializeComponent();
-            LoadBookmarks();
-            UpdateBookmarksList();
         }
 
         private async void Form1_Load(object sender, EventArgs e)
