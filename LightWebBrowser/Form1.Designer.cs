@@ -1,3 +1,5 @@
+using Microsoft.Web.WebView2.WinForms;
+
 namespace LightWebBrowser
 {
     partial class Form1
