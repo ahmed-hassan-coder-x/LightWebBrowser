@@ -194,34 +194,7 @@ namespace LightWebBrowser
         {
             NavigateToPage(homepage);
         }
-
-        private void btnBookmark_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                var current = webView21.Source?.ToString();
-                if (!string.IsNullOrEmpty(current))
-                {
-                    if (!bookmarks.Contains(current))
-                    {
-                        bookmarks.Add(current);
-                        SaveBookmarks();
-                        UpdateBookmarksList();
-                        MessageBox.Show("Added to bookmarks: " + current);
-                    }
-                    else
-                    {
-                        MessageBox.Show("This page is already bookmarked.");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Bookmark error: " + ex.Message);
-            }
-        }
-
-
+        
         private void btnSettings_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Settings not implemented yet.", "Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
