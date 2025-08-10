@@ -18,35 +18,105 @@ namespace LightWebBrowser
         public Form1()
         {
             InitializeComponent();
-            InitWebView2();
             LoadBookmarks();
             UpdateBookmarksList();
         }
 
-        private async void InitWebView2()
+        private async void Form1_Load(object sender, EventArgs e)
         {
-            await webView21.EnsureCoreWebView2Async();
-            webView21.CoreWebView2.Navigate(homepage);
-            webView21.CoreWebView2.DocumentTitleChanged += (s, e) =>
+            txtUrl.Text = homepage;
+            await InitWebView2Async();
+        }
+
+        private async System.Threading.Tasks.Task InitWebView2Async()
+        {
+            try
+            {
+                if (webView21.CoreWebView2 == null)
+                {
+                    await webView21.EnsureCoreWebView2Async();
+                }
+
+                if (webView21.CoreWebView2 != null)
+                {
+                    webView21.CoreWebView2.DocumentTitleChanged += CoreWebView2_DocumentTitleChanged;
+                    webView21.CoreWebView2.NavigationCompleted += CoreWebView2_NavigationCompleted;
+                    webView21.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
+                    webView21.Source = new Uri(homepage);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("WebView2 initialization failed: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void CoreWebView2_NewWindowRequested(object sender, CoreWebView2NewWindowRequestedEventArgs e)
+        {
+            // Open popups in the same WebView
+            if (!string.IsNullOrEmpty(e.Uri))
+            {
+                webView21.CoreWebView2.Navigate(e.Uri);
+                e.Handled = true;
+            }
+        }
+
+        private void CoreWebView2_DocumentTitleChanged(object sender, object e)
+        {
+            try
             {
                 this.Text = webView21.CoreWebView2.DocumentTitle + " - Light Web Browser";
-            };
-            webView21.CoreWebView2.NavigationCompleted += (s, e) =>
+            }
+            catch
+            {
+                this.Text = "Light Web Browser";
+            }
+        }
+
+        private void CoreWebView2_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
+        {
+            try
             {
                 txtUrl.Text = webView21.Source?.ToString() ?? "";
                 UpdateHistory(txtUrl.Text);
-            };
+                progressBar1.Value = 0;
+            }
+            catch { }
         }
 
         private void NavigateToPage(string url)
         {
-            if (!url.StartsWith("http://") && !url.StartsWith("https://"))
+            if (string.IsNullOrWhiteSpace(url))
+                return;
+
+            if (!url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+                !url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
                 url = "https://" + url;
-            webView21.CoreWebView2.Navigate(url);
+            }
+
+            try
+            {
+                if (webView21.CoreWebView2 != null)
+                {
+                    webView21.CoreWebView2.Navigate(url);
+                }
+                else
+                {
+                    webView21.Source = new Uri(url);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Navigation error: " + ex.Message);
+            }
         }
 
         private void UpdateHistory(string url)
         {
+            if (string.IsNullOrEmpty(url))
+                return;
+
             if (historyIndex == -1 || historyIndex == history.Count - 1)
             {
                 history.Add(url);
@@ -54,10 +124,12 @@ namespace LightWebBrowser
             }
             else
             {
-                history.RemoveRange(historyIndex + 1, history.Count - historyIndex - 1);
+                if (historyIndex + 1 < history.Count)
+                    history.RemoveRange(historyIndex + 1, history.Count - historyIndex - 1);
                 history.Add(url);
                 historyIndex++;
             }
+
             UpdateNavigationButtons();
         }
 
@@ -67,7 +139,10 @@ namespace LightWebBrowser
             btnForward.Enabled = historyIndex < history.Count - 1;
         }
 
-        private void btnGo_Click(object sender, EventArgs e) => NavigateToPage(txtUrl.Text);
+        private void btnGo_Click(object sender, EventArgs e)
+        {
+            NavigateToPage(txtUrl.Text.Trim());
+        }
 
         private void btnBack_Click(object sender, EventArgs e)
         {
@@ -89,28 +164,60 @@ namespace LightWebBrowser
             UpdateNavigationButtons();
         }
 
-        private void btnRefresh_Click(object sender, EventArgs e) => webView21.Reload();
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                webView21.Reload();
+            }
+            catch
+            {
+                // fallback
+                if (!string.IsNullOrWhiteSpace(txtUrl.Text))
+                    NavigateToPage(txtUrl.Text);
+            }
+        }
 
-        private void btnStop_Click(object sender, EventArgs e) => webView21.Stop();
+        private void btnStop_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                webView21.CoreWebView2?.Stop();
+            }
+            catch
+            {
+                // no-op
+            }
+        }
 
-        private void btnHome_Click(object sender, EventArgs e) => NavigateToPage(homepage);
+        private void btnHome_Click(object sender, EventArgs e)
+        {
+            NavigateToPage(homepage);
+        }
 
         private void btnBookmark_Click(object sender, EventArgs e)
         {
-            if (webView21.Source != null)
+            try
             {
-                string currentUrl = webView21.Source.ToString();
-                if (!bookmarks.Contains(currentUrl))
+                var current = webView21.Source?.ToString();
+                if (!string.IsNullOrEmpty(current))
                 {
-                    bookmarks.Add(currentUrl);
-                    SaveBookmarks();
-                    UpdateBookmarksList();
-                    MessageBox.Show("Added to bookmarks: " + currentUrl);
+                    if (!bookmarks.Contains(current))
+                    {
+                        bookmarks.Add(current);
+                        SaveBookmarks();
+                        UpdateBookmarksList();
+                        MessageBox.Show("Added to bookmarks: " + current);
+                    }
+                    else
+                    {
+                        MessageBox.Show("This page is already bookmarked.");
+                    }
                 }
-                else
-                {
-                    MessageBox.Show("This page is already bookmarked.");
-                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Bookmark error: " + ex.Message);
             }
         }
 
@@ -123,6 +230,11 @@ namespace LightWebBrowser
                 SaveBookmarks();
                 UpdateBookmarksList();
             }
+        }
+
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Settings not implemented yet.", "Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void UpdateBookmarksList()
@@ -164,7 +276,7 @@ namespace LightWebBrowser
             if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
-                NavigateToPage(txtUrl.Text);
+                NavigateToPage(txtUrl.Text.Trim());
             }
         }
 
@@ -174,17 +286,6 @@ namespace LightWebBrowser
             {
                 NavigateToPage(listBoxBookmarks.SelectedItem.ToString());
             }
-        }
-
-        // الأحداث المفقودة سابقاً
-        private void btnSettings_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Settings not implemented yet.");
-        }
-
-        private void webBrowser1_DocumentTitleChanged(object sender, EventArgs e)
-        {
-            this.Text = "Light Web Browser";
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
