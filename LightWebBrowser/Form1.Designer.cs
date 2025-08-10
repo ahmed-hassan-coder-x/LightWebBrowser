@@ -15,7 +15,7 @@ namespace LightWebBrowser
         private System.Windows.Forms.Button btnSettings;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.ListBox listBoxBookmarks;
-        private System.Windows.Forms.WebBrowser webBrowser1;
+        private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
 
         protected override void Dispose(bool disposing)
         {
@@ -40,7 +40,8 @@ namespace LightWebBrowser
             this.btnSettings = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.listBoxBookmarks = new System.Windows.Forms.ListBox();
-            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
+            this.webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
+            ((System.ComponentModel.ISupportInitialize)(this.webView21)).BeginInit();
             this.SuspendLayout();
             // 
             // txtUrl
@@ -164,22 +165,21 @@ namespace LightWebBrowser
             this.listBoxBookmarks.TabIndex = 11;
             this.listBoxBookmarks.DoubleClick += new System.EventHandler(this.listBoxBookmarks_DoubleClick);
             // 
-            // webBrowser1
+            // webView21
             // 
-            this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.webView21.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                                     | System.Windows.Forms.AnchorStyles.Left)
                                     | System.Windows.Forms.AnchorStyles.Right)));
-            this.webBrowser1.Location = new System.Drawing.Point(12, 89);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(656, 349);
-            this.webBrowser1.TabIndex = 12;
-            this.webBrowser1.DocumentTitleChanged += new System.EventHandler(this.webBrowser1_DocumentTitleChanged);
+            this.webView21.Location = new System.Drawing.Point(12, 89);
+            this.webView21.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webView21.Name = "webView21";
+            this.webView21.Size = new System.Drawing.Size(656, 349);
+            this.webView21.TabIndex = 12;
             // 
             // Form1
             // 
             this.ClientSize = new System.Drawing.Size(986, 450);
-            this.Controls.Add(this.webBrowser1);
+            this.Controls.Add(this.webView21);
             this.Controls.Add(this.listBoxBookmarks);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.btnSettings);
@@ -196,6 +196,7 @@ namespace LightWebBrowser
             this.Text = "Light Web Browser";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
+            ((System.ComponentModel.ISupportInitialize)(this.webView21)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
         }
