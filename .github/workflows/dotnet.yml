@@ -26,6 +26,9 @@ jobs:
       - name: Setup NuGet CLI
         uses: NuGet/setup-nuget@v1
 
+      - name: Install WebView2
+        run: nuget install Microsoft.Web.WebView2 -Version 1.0.2592.51 -OutputDirectory packages
+
       - name: Restore NuGet packages
         run: nuget restore "LightWebBrowser.sln"
 
