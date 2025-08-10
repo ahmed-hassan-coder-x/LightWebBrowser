@@ -33,8 +33,9 @@ jobs:
         run: msbuild "LightWebBrowser.sln" /p:Configuration=Release /p:Platform="Any CPU"
 
       - name: Get git short hash
-        id: vars
+        id: get_hash
         run: echo "SHORT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        shell: bash
 
       - name: Rename exe file with git short hash
         shell: pwsh
@@ -43,13 +44,14 @@ jobs:
           $newName = "LightWebBrowser-$env:SHORT_HASH.exe"
           if (Test-Path $oldPath) {
             Rename-Item -Path $oldPath -NewName $newName
+            Write-Host "Renamed to $newName"
           } else {
             Write-Host "Executable not found at $oldPath"
             exit 1
           }
 
       - name: Show build output (for debugging)
-        shell: powershell
+        shell: pwsh
         run: Get-ChildItem "LightWebBrowser\bin\Release\net48"
 
       - name: Publish build artifacts
