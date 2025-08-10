@@ -38,11 +38,6 @@ namespace LightWebBrowser
             };
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            txtUrl.Text = homepage;
-        }
-
         private void NavigateToPage(string url)
         {
             if (!url.StartsWith("http://") && !url.StartsWith("https://"))
@@ -72,10 +67,7 @@ namespace LightWebBrowser
             btnForward.Enabled = historyIndex < history.Count - 1;
         }
 
-        private void btnGo_Click(object sender, EventArgs e)
-        {
-            NavigateToPage(txtUrl.Text);
-        }
+        private void btnGo_Click(object sender, EventArgs e) => NavigateToPage(txtUrl.Text);
 
         private void btnBack_Click(object sender, EventArgs e)
         {
@@ -97,20 +89,11 @@ namespace LightWebBrowser
             UpdateNavigationButtons();
         }
 
-        private void btnRefresh_Click(object sender, EventArgs e)
-        {
-            webView21.Reload();
-        }
+        private void btnRefresh_Click(object sender, EventArgs e) => webView21.Reload();
 
-        private void btnStop_Click(object sender, EventArgs e)
-        {
-            webView21.Stop();
-        }
+        private void btnStop_Click(object sender, EventArgs e) => webView21.Stop();
 
-        private void btnHome_Click(object sender, EventArgs e)
-        {
-            NavigateToPage(homepage);
-        }
+        private void btnHome_Click(object sender, EventArgs e) => NavigateToPage(homepage);
 
         private void btnBookmark_Click(object sender, EventArgs e)
         {
@@ -191,6 +174,22 @@ namespace LightWebBrowser
             {
                 NavigateToPage(listBoxBookmarks.SelectedItem.ToString());
             }
+        }
+
+        // الأحداث المفقودة سابقاً
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Settings not implemented yet.");
+        }
+
+        private void webBrowser1_DocumentTitleChanged(object sender, EventArgs e)
+        {
+            this.Text = "Light Web Browser";
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SaveBookmarks();
         }
     }
 }
