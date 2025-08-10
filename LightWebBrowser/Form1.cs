@@ -17,7 +17,7 @@ namespace LightWebBrowser
         public Form1()
         {
             InitializeComponent();
-            webBrowser1.ScriptErrorsSuppressed = true; // منع أخطاء السكريبت تظهر
+            webBrowser1.ScriptErrorsSuppressed = true;
             webBrowser1.ProgressChanged += WebBrowser1_ProgressChanged;
             webBrowser1.Navigated += WebBrowser1_Navigated;
             webBrowser1.DocumentTitleChanged += webBrowser1_DocumentTitleChanged;
