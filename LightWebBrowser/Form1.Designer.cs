@@ -145,7 +145,6 @@ namespace LightWebBrowser
             // 
             this.ClientSize = new System.Drawing.Size(986, 450);
             this.Controls.Add(this.webView21);
-            this.Controls.Add(this.listBoxBookmarks);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.btnHome);
