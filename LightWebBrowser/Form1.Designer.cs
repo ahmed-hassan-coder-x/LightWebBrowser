@@ -34,8 +34,6 @@ namespace LightWebBrowser
             this.btnRefresh = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
             this.btnHome = new System.Windows.Forms.Button();
-            this.btnBookmark = new System.Windows.Forms.Button();
-            this.btnRemoveBookmark = new System.Windows.Forms.Button();
             this.btnSettings = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
@@ -150,8 +148,6 @@ namespace LightWebBrowser
             this.Controls.Add(this.listBoxBookmarks);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.btnSettings);
-            this.Controls.Add(this.btnRemoveBookmark);
-            this.Controls.Add(this.btnBookmark);
             this.Controls.Add(this.btnHome);
             this.Controls.Add(this.btnStop);
             this.Controls.Add(this.btnRefresh);
