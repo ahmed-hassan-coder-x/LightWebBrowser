@@ -221,54 +221,10 @@ namespace LightWebBrowser
             }
         }
 
-        private void btnRemoveBookmark_Click(object sender, EventArgs e)
-        {
-            if (listBoxBookmarks.SelectedItem != null)
-            {
-                string toRemove = listBoxBookmarks.SelectedItem.ToString();
-                bookmarks.Remove(toRemove);
-                SaveBookmarks();
-                UpdateBookmarksList();
-            }
-        }
 
         private void btnSettings_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Settings not implemented yet.", "Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private void UpdateBookmarksList()
-        {
-            listBoxBookmarks.Items.Clear();
-            foreach (var bm in bookmarks)
-                listBoxBookmarks.Items.Add(bm);
-        }
-
-        private void SaveBookmarks()
-        {
-            try
-            {
-                File.WriteAllLines(bookmarksFile, bookmarks);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to save bookmarks: " + ex.Message);
-            }
-        }
-
-        private void LoadBookmarks()
-        {
-            try
-            {
-                if (File.Exists(bookmarksFile))
-                {
-                    bookmarks = new List<string>(File.ReadAllLines(bookmarksFile));
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to load bookmarks: " + ex.Message);
-            }
         }
 
         private void txtUrl_KeyDown(object sender, KeyEventArgs e)
@@ -277,14 +233,6 @@ namespace LightWebBrowser
             {
                 e.SuppressKeyPress = true;
                 NavigateToPage(txtUrl.Text.Trim());
-            }
-        }
-
-        private void listBoxBookmarks_DoubleClick(object sender, EventArgs e)
-        {
-            if (listBoxBookmarks.SelectedItem != null)
-            {
-                NavigateToPage(listBoxBookmarks.SelectedItem.ToString());
             }
         }
 
