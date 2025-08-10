@@ -205,17 +205,16 @@ namespace LightWebBrowser
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            DialogResult result = MessageBox.Show(
-                "Do you want to exit", 
-                "Confirm exit", 
-                MessageBoxButtons.YesNo, 
-                MessageBoxIcon.Question
-            );
-        
-            if (result == DialogResult.No)
-            {
-                e.Cancel = true;
-            }
-        }
+{
+    DialogResult result = MessageBox.Show(
+        "Do you want to exit",
+        "Confirm exit",
+        MessageBoxButtons.YesNo,
+        MessageBoxIcon.Question
+    );
+
+    if (result == DialogResult.No)
+    {
+        e.Cancel = true;
+    }
 }
