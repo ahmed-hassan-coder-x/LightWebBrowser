@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using Microsoft.Web.WebView2.Core;
 
 namespace LightWebBrowser
 {
@@ -17,34 +18,36 @@ namespace LightWebBrowser
         public Form1()
         {
             InitializeComponent();
-            webBrowser1.ScriptErrorsSuppressed = true;
-            webBrowser1.ProgressChanged += WebBrowser1_ProgressChanged;
-            webBrowser1.Navigated += WebBrowser1_Navigated;
-            webBrowser1.DocumentTitleChanged += webBrowser1_DocumentTitleChanged;
+            InitWebView2();
             LoadBookmarks();
             UpdateBookmarksList();
+        }
+
+        private async void InitWebView2()
+        {
+            await webView21.EnsureCoreWebView2Async();
+            webView21.CoreWebView2.Navigate(homepage);
+            webView21.CoreWebView2.DocumentTitleChanged += (s, e) =>
+            {
+                this.Text = webView21.CoreWebView2.DocumentTitle + " - Light Web Browser";
+            };
+            webView21.CoreWebView2.NavigationCompleted += (s, e) =>
+            {
+                txtUrl.Text = webView21.Source?.ToString() ?? "";
+                UpdateHistory(txtUrl.Text);
+            };
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             txtUrl.Text = homepage;
-            NavigateToPage(homepage);
         }
 
         private void NavigateToPage(string url)
         {
-            try
-            {
-                if (!url.StartsWith("http://") && !url.StartsWith("https://"))
-                    url = "https://" + url; // https أولاً دائماً
-
-                webBrowser1.Navigate(url);
-                UpdateHistory(url);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Navigation error: " + ex.Message);
-            }
+            if (!url.StartsWith("http://") && !url.StartsWith("https://"))
+                url = "https://" + url;
+            webView21.CoreWebView2.Navigate(url);
         }
 
         private void UpdateHistory(string url)
@@ -96,12 +99,12 @@ namespace LightWebBrowser
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            webBrowser1.Refresh();
+            webView21.Reload();
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            webBrowser1.Stop();
+            webView21.Stop();
         }
 
         private void btnHome_Click(object sender, EventArgs e)
@@ -111,9 +114,9 @@ namespace LightWebBrowser
 
         private void btnBookmark_Click(object sender, EventArgs e)
         {
-            if (webBrowser1.Url != null)
+            if (webView21.Source != null)
             {
-                string currentUrl = webBrowser1.Url.ToString();
+                string currentUrl = webView21.Source.ToString();
                 if (!bookmarks.Contains(currentUrl))
                 {
                     bookmarks.Add(currentUrl);
@@ -173,29 +176,6 @@ namespace LightWebBrowser
             }
         }
 
-        private void webBrowser1_DocumentTitleChanged(object sender, EventArgs e)
-        {
-            this.Text = webBrowser1.DocumentTitle + " - Light Web Browser";
-        }
-
-        private void WebBrowser1_Navigated(object sender, WebBrowserNavigatedEventArgs e)
-        {
-            txtUrl.Text = webBrowser1.Url?.ToString() ?? "";
-        }
-
-        private void WebBrowser1_ProgressChanged(object sender, WebBrowserProgressChangedEventArgs e)
-        {
-            if (e.MaximumProgress > 0)
-            {
-                int progress = (int)(e.CurrentProgress * 100 / e.MaximumProgress);
-                progressBar1.Value = Math.Min(Math.Max(progress, 0), 100);
-            }
-            else
-            {
-                progressBar1.Value = 0;
-            }
-        }
-
         private void txtUrl_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -211,24 +191,6 @@ namespace LightWebBrowser
             {
                 NavigateToPage(listBoxBookmarks.SelectedItem.ToString());
             }
-        }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (webBrowser1.IsBusy)
-            {
-                var result = MessageBox.Show("A page is still loading. Are you sure you want to exit?", "Confirm Exit", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (result == DialogResult.No)
-                {
-                    e.Cancel = true;
-                }
-            }
-        }
-
-        private void btnSettings_Click(object sender, EventArgs e)
-        {
-            // يمكن تضيف هنا إعدادات مستقبلية
-            MessageBox.Show("Settings window is not implemented yet.");
         }
     }
 }
