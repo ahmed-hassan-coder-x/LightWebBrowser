@@ -16,7 +16,6 @@ namespace LightWebBrowser
         private System.Windows.Forms.Button btnRemoveBookmark;
         private System.Windows.Forms.Button btnSettings;
         private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.ListBox listBoxBookmarks;
         private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
 
         protected override void Dispose(bool disposing)
@@ -41,7 +40,6 @@ namespace LightWebBrowser
             this.btnRemoveBookmark = new System.Windows.Forms.Button();
             this.btnSettings = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.listBoxBookmarks = new System.Windows.Forms.ListBox();
             this.webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
             ((System.ComponentModel.ISupportInitialize)(this.webView21)).BeginInit();
             this.SuspendLayout();
@@ -155,17 +153,6 @@ namespace LightWebBrowser
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(656, 10);
             this.progressBar1.TabIndex = 10;
-            // 
-            // listBoxBookmarks
-            // 
-            this.listBoxBookmarks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.listBoxBookmarks.FormattingEnabled = true;
-            this.listBoxBookmarks.ItemHeight = 16;
-            this.listBoxBookmarks.Location = new System.Drawing.Point(674, 12);
-            this.listBoxBookmarks.Name = "listBoxBookmarks";
-            this.listBoxBookmarks.Size = new System.Drawing.Size(300, 404);
-            this.listBoxBookmarks.TabIndex = 11;
-            this.listBoxBookmarks.DoubleClick += new System.EventHandler(this.listBoxBookmarks_DoubleClick);
             // 
             // webView21
             // 
