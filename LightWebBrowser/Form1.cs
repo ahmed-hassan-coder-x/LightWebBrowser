@@ -218,4 +218,5 @@ namespace LightWebBrowser
                 e.Cancel = true;
             }
         }
+    }
 }
