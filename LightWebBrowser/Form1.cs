@@ -12,9 +12,6 @@ namespace LightWebBrowser
         private List<string> history = new List<string>();
         private int historyIndex = -1;
 
-        private List<string> bookmarks = new List<string>();
-        private string bookmarksFile = "bookmarks.txt";
-
         public Form1()
         {
             InitializeComponent();
@@ -209,7 +206,7 @@ namespace LightWebBrowser
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            SaveBookmarks();
+            // do it tahapro10x
         }
     }
 }
