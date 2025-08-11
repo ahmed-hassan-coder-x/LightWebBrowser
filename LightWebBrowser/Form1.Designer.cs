@@ -1,3 +1,4 @@
+// @TAHAPRO10X pls redesign the ui :) 
 using Microsoft.Web.WebView2.WinForms;
 
 namespace LightWebBrowser
