@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
@@ -48,9 +46,16 @@ namespace LightWebBrowser
                 Directory.CreateDirectory(userDataFolderBase);
 
             txtUrl.Text = homepage;
-            comboSearchEngine.SelectedIndex = Math.Max(0, comboSearchEngine.Items.IndexOf("Google"));
+
+            if (comboSearchEngine.Items.Count == 0)
+                comboSearchEngine.Items.AddRange(new string[] { "Google", "Bing", "DuckDuckGo" });
+
+            int idx = comboSearchEngine.Items.IndexOf("Google");
+            comboSearchEngine.SelectedIndex = Math.Max(0, idx);
+
             // create first tab
-            CreateNewTab(homepage, makeActive: true, incognito: false);
+            CreateNewTab(homepage, true, false);
+
             await Task.CompletedTask;
         }
 
@@ -88,57 +93,80 @@ namespace LightWebBrowser
 
             try
             {
-                string userDataFolder = incognito ? Path.Combine(Path.GetTempPath(), "LWB_Incognito_" + Guid.NewGuid().ToString("N")) : defaultUserDataFolder;
+                string userDataFolder;
+                if (incognito)
+                {
+                    userDataFolder = Path.Combine(Path.GetTempPath(), "LWB_Incognito_" + Guid.NewGuid().ToString("N"));
+                }
+                else
+                {
+                    userDataFolder = defaultUserDataFolder;
+                }
+
                 if (!Directory.Exists(userDataFolder))
                     Directory.CreateDirectory(userDataFolder);
 
                 var env = await CoreWebView2Environment.CreateAsync(userDataFolder: userDataFolder);
                 await webView.EnsureCoreWebView2Async(env);
 
-                webView.CoreWebView2.DocumentTitleChanged += (s, e) => { tab.Text = webView.CoreWebView2.DocumentTitle ?? webView.Source?.ToString() ?? "Tab"; };
-                webView.CoreWebView2.NavigationCompleted += (s, e) => { OnNavigationCompleted(webView); };
-                webView.CoreWebView2.NewWindowRequested += (s, e) =>
-                {
-                    if (!string.IsNullOrEmpty(e.Uri))
-                    {
-                        // open in new tab
-                        this.BeginInvoke(new Action(() => CreateNewTab(e.Uri, makeActive: true, incognito: incognito)));
-                        e.Handled = true;
-                    }
-                };
-
-                // Basic request filtering for ad blocking
-                webView.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
-                webView.CoreWebView2.WebResourceRequested += (s, e) =>
+                webView.CoreWebView2.DocumentTitleChanged += (s, e) =>
                 {
                     try
                     {
-                        var req = e.Request;
-                        if (req != null && !string.IsNullOrEmpty(req.Uri))
+                        tab.Text = webView.CoreWebView2.DocumentTitle ?? webView.Source?.ToString() ?? "Tab";
+                    }
+                    catch
+                    {
+                        tab.Text = webView.Source?.ToString() ?? "Tab";
+                    }
+                };
+
+                webView.CoreWebView2.NavigationCompleted += (s, e) => { OnNavigationCompleted(webView); };
+
+                webView.CoreWebView2.NewWindowRequested += (s, e) =>
+                {
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(e.Uri))
                         {
-                            Uri u = new Uri(req.Uri);
-                            foreach (var block in adBlockList)
-                            {
-                                if (u.Host.Contains(block, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    e.Response = webView.CoreWebView2.Environment.CreateWebResourceResponse(null, 403, "Blocked", "");
-                                    return;
-                                }
-                            }
+                            this.BeginInvoke(new Action(() => CreateNewTab(e.Uri, true, incognito)));
+                            e.Handled = true;
                         }
                     }
                     catch { }
                 };
 
+                // Basic request filtering for ad blocking
+                try
+                {
+                    webView.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
+                    webView.CoreWebView2.WebResourceRequested += (s, e) =>
+                    {
+                        try
+                        {
+                            var req = e.Request;
+                            if (req != null && !string.IsNullOrEmpty(req.Uri))
+                            {
+                                Uri u = new Uri(req.Uri);
+                                foreach (var block in adBlockList)
+                                {
+                                    if (u.Host.IndexOf(block, StringComparison.OrdinalIgnoreCase) >= 0)
+                                    {
+                                        e.Response = webView.CoreWebView2.Environment.CreateWebResourceResponse(null, 403, "Blocked", "");
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                        catch { }
+                    };
+                }
+                catch { }
+
                 // Downloads
                 webView.CoreWebView2.DownloadStarting += CoreWebView2_DownloadStarting;
 
-                // context menu for translate / open in new tab
-                webView.CoreWebView2.ContextMenuRequested += (s, e) =>
-                {
-                    // leave default context menu, but we will add a custom action via JS injection or separate UI
-                };
-
+                // navigate
                 if (!string.IsNullOrEmpty(url))
                 {
                     NavigateWebView(webView, url);
@@ -161,7 +189,8 @@ namespace LightWebBrowser
             if (tabControl.SelectedTab == null) return null;
             foreach (Control c in tabControl.SelectedTab.Controls)
             {
-                if (c is WebView2 wv) return wv;
+                WebView2 wv = c as WebView2;
+                if (wv != null) return wv;
             }
             return null;
         }
@@ -172,7 +201,8 @@ namespace LightWebBrowser
             {
                 foreach (Control c in t.Controls)
                 {
-                    if (c is WebView2 wv) yield return wv;
+                    WebView2 wv = c as WebView2;
+                    if (wv != null) yield return wv;
                 }
             }
         }
@@ -237,21 +267,29 @@ namespace LightWebBrowser
             if (wv != null)
                 NavigateWebView(wv, txtUrl.Text.Trim());
             else
-                CreateNewTab(txtUrl.Text.Trim(), makeActive: true, incognito: incognitoMode);
+                CreateNewTab(txtUrl.Text.Trim(), true, incognitoMode);
         }
 
         private void btnBack_Click(object sender, EventArgs e)
         {
             var wv = GetActiveWebView();
-            if (wv?.CoreWebView2 != null && wv.CoreWebView2.CanGoBack)
-                wv.CoreWebView2.GoBack();
+            try
+            {
+                if (wv != null && wv.CoreWebView2 != null && wv.CoreWebView2.CanGoBack)
+                    wv.CoreWebView2.GoBack();
+            }
+            catch { }
         }
 
         private void btnForward_Click(object sender, EventArgs e)
         {
             var wv = GetActiveWebView();
-            if (wv?.CoreWebView2 != null && wv.CoreWebView2.CanGoForward)
-                wv.CoreWebView2.GoForward();
+            try
+            {
+                if (wv != null && wv.CoreWebView2 != null && wv.CoreWebView2.CanGoForward)
+                    wv.CoreWebView2.GoForward();
+            }
+            catch { }
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
@@ -288,7 +326,7 @@ namespace LightWebBrowser
 
         private void btnNewTab_Click(object sender, EventArgs e)
         {
-            CreateNewTab(homepage, makeActive: true, incognito: incognitoMode);
+            CreateNewTab(homepage, true, incognitoMode);
         }
 
         private void btnCloseTab_Click(object sender, EventArgs e)
@@ -296,9 +334,10 @@ namespace LightWebBrowser
             if (tabControl.TabPages.Count > 0)
             {
                 var current = tabControl.SelectedTab;
-                // dispose any webview resources
                 foreach (Control c in current.Controls)
-                    c.Dispose();
+                {
+                    try { c.Dispose(); } catch { }
+                }
                 tabControl.TabPages.Remove(current);
             }
         }
@@ -338,7 +377,7 @@ namespace LightWebBrowser
                 list.Columns.Add("URL", -2, HorizontalAlignment.Left);
                 list.Columns.Add("Time", 150, HorizontalAlignment.Left);
 
-                // load from memory
+                // load from memory (most recent first)
                 for (int i = globalHistory.Count - 1; i >= 0; i--)
                 {
                     string url = globalHistory[i];
@@ -352,7 +391,7 @@ namespace LightWebBrowser
                     if (list.SelectedItems.Count > 0)
                     {
                         var url = list.SelectedItems[0].Tag as string;
-                        CreateNewTab(url, makeActive: true, incognito: incognitoMode);
+                        CreateNewTab(url, true, incognitoMode);
                         historyForm.Close();
                     }
                 };
@@ -392,44 +431,48 @@ namespace LightWebBrowser
 
         private void UpdateBookmarksBar()
         {
-            toolStripBookmarks.Items.Clear();
-            foreach (var bm in bookmarks)
+            try
             {
-                var btn = new ToolStripButton
+                toolStripBookmarks.Items.Clear();
+                foreach (var bm in bookmarks)
                 {
-                    Text = ShortenForToolbar(bm),
-                    Tag = bm,
-                    ToolTipText = bm,
-                    AutoSize = false,
-                    Width = 140
-                };
-                btn.Click += (s, e) =>
-                {
-                    var url = (s as ToolStripButton).Tag as string;
-                    CreateNewTab(url, makeActive: true, incognito: incognitoMode);
-                };
-                toolStripBookmarks.Items.Add(btn);
-            }
-
-            // add spacer and add bookmark button
-            toolStripBookmarks.Items.Add(new ToolStripSeparator());
-            var addBtn = new ToolStripButton("★") { ToolTipText = "Add Bookmark" };
-            addBtn.Click += (s, e) =>
-            {
-                var wv = GetActiveWebView();
-                var url = wv?.Source?.ToString() ?? txtUrl.Text;
-                if (!string.IsNullOrEmpty(url))
-                {
-                    bookmarks.Add(url);
-                    SaveBookmarks();
-                    UpdateBookmarksBar();
+                    var btn = new ToolStripButton
+                    {
+                        Text = ShortenForToolbar(bm),
+                        Tag = bm,
+                        ToolTipText = bm,
+                        AutoSize = false,
+                        Width = 140
+                    };
+                    btn.Click += (s, e) =>
+                    {
+                        var url = (s as ToolStripButton).Tag as string;
+                        CreateNewTab(url, true, incognitoMode);
+                    };
+                    toolStripBookmarks.Items.Add(btn);
                 }
-            };
-            toolStripBookmarks.Items.Add(addBtn);
+
+                toolStripBookmarks.Items.Add(new ToolStripSeparator());
+                var addBtn = new ToolStripButton("★") { ToolTipText = "Add Bookmark" };
+                addBtn.Click += (s, e) =>
+                {
+                    var wv = GetActiveWebView();
+                    var url = (wv != null ? (wv.Source != null ? wv.Source.ToString() : null) : null) ?? txtUrl.Text;
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        bookmarks.Add(url);
+                        SaveBookmarks();
+                        UpdateBookmarksBar();
+                    }
+                };
+                toolStripBookmarks.Items.Add(addBtn);
+            }
+            catch { }
         }
 
         private string ShortenForToolbar(string url)
         {
+            if (string.IsNullOrEmpty(url)) return "";
             if (url.Length > 36) return url.Substring(0, 33) + "...";
             return url;
         }
@@ -445,7 +488,7 @@ namespace LightWebBrowser
                 var session = new List<string>();
                 foreach (var wv in GetAllWebViews())
                 {
-                    if (wv?.Source != null)
+                    if (wv != null && wv.Source != null)
                         session.Add(wv.Source.ToString());
                 }
                 var json = JsonConvert.SerializeObject(session, Formatting.Indented);
@@ -464,7 +507,7 @@ namespace LightWebBrowser
                     var urls = JsonConvert.DeserializeObject<List<string>>(json) ?? new List<string>();
                     tabControl.TabPages.Clear();
                     foreach (var u in urls)
-                        CreateNewTab(u, makeActive: false, incognito: false);
+                        CreateNewTab(u, false, false);
                     if (tabControl.TabPages.Count > 0)
                         tabControl.SelectedIndex = 0;
                 }
@@ -483,7 +526,6 @@ namespace LightWebBrowser
                 var def = e;
                 string uri = def.DownloadOperation.Uri;
                 string fileName = def.ResultFilePath;
-                // allow user to choose location
                 using (SaveFileDialog sfd = new SaveFileDialog())
                 {
                     sfd.FileName = Path.GetFileName(fileName);
@@ -493,7 +535,6 @@ namespace LightWebBrowser
                     }
                 }
 
-                // optionally add to downloads list
                 listViewDownloads.Items.Add(new ListViewItem(new[] { Path.GetFileName(def.ResultFilePath), "Starting", uri }));
 
                 def.DownloadOperation.BytesReceivedChanged += (s, ev) =>
@@ -556,7 +597,6 @@ namespace LightWebBrowser
             var wv = GetActiveWebView();
             if (wv == null || wv.CoreWebView2 == null) return;
 
-            // get selected text via script and open translate.google.com with it
             try
             {
                 wv.CoreWebView2.ExecuteScriptAsync("window.getSelection().toString();").ContinueWith(t =>
@@ -569,7 +609,7 @@ namespace LightWebBrowser
                         return;
                     }
                     string url = "https://translate.google.com/?sl=auto&tl=en&text=" + Uri.EscapeDataString(res) + "&op=translate";
-                    this.BeginInvoke(new Action(() => CreateNewTab(url, makeActive: true, incognito: incognitoMode)));
+                    this.BeginInvoke(new Action(() => CreateNewTab(url, true, incognitoMode)));
                 });
             }
             catch { }
@@ -578,8 +618,9 @@ namespace LightWebBrowser
         private string TrimJsonString(string json)
         {
             if (string.IsNullOrEmpty(json)) return "";
-            // the ExecuteScriptAsync returns a JSON string literal, like "\"selected text\""
-            if (json.Length >= 2 && json[0] == '"' && json[^1] == '"')
+            // ExecuteScriptAsync may return a JSON string literal like "\"text\"" or primitive like "true"
+            // If it's a quoted string, deserialize to get the inner text
+            if (json.Length >= 2 && json[0] == '"' && json[json.Length - 1] == '"')
             {
                 try
                 {
@@ -587,6 +628,7 @@ namespace LightWebBrowser
                 }
                 catch { return json.Trim('"'); }
             }
+            // otherwise return raw
             return json;
         }
 
@@ -596,7 +638,6 @@ namespace LightWebBrowser
 
         private void comboSearchEngine_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // saved on change
             SaveSettings();
         }
 
@@ -612,15 +653,17 @@ namespace LightWebBrowser
                 }
                 else
                 {
-                    var engine = comboSearchEngine.SelectedItem?.ToString() ?? "Google";
+                    var engine = (comboSearchEngine.SelectedItem != null) ? comboSearchEngine.SelectedItem.ToString() : "Google";
                     string query = Uri.EscapeDataString(text);
-                    string url = engine switch
-                    {
-                        "Bing" => $"https://www.bing.com/search?q={query}",
-                        "DuckDuckGo" => $"https://duckduckgo.com/?q={query}",
-                        _ => $"https://www.google.com/search?q={query}"
-                    };
-                    CreateNewTab(url, makeActive: true, incognito: incognitoMode);
+                    string url;
+                    if (engine == "Bing")
+                        url = "https://www.bing.com/search?q=" + query;
+                    else if (engine == "DuckDuckGo")
+                        url = "https://duckduckgo.com/?q=" + query;
+                    else
+                        url = "https://www.google.com/search?q=" + query;
+
+                    CreateNewTab(url, true, incognitoMode);
                 }
             }
         }
@@ -656,7 +699,6 @@ namespace LightWebBrowser
                 incognitoMode = settings.IncognitoByDefault;
                 btnIncognito.Checked = incognitoMode;
 
-                // search engines combo
                 if (comboSearchEngine.Items.Count == 0)
                 {
                     comboSearchEngine.Items.AddRange(new string[] { "Google", "Bing", "DuckDuckGo" });
@@ -664,7 +706,10 @@ namespace LightWebBrowser
                 comboSearchEngine.SelectedItem = settings.PreferredSearch ?? "Google";
 
                 if (settings.DarkMode)
+                {
+                    btnDarkMode.Checked = true;
                     ApplyDarkMode();
+                }
             }
             catch { settings = new AppSettings(); }
         }
@@ -674,7 +719,7 @@ namespace LightWebBrowser
             try
             {
                 settings.IncognitoByDefault = btnIncognito.Checked;
-                settings.PreferredSearch = comboSearchEngine.SelectedItem?.ToString() ?? "Google";
+                settings.PreferredSearch = comboSearchEngine.SelectedItem != null ? comboSearchEngine.SelectedItem.ToString() : "Google";
                 settings.DarkMode = btnDarkMode.Checked;
                 var json = JsonConvert.SerializeObject(settings, Formatting.Indented);
                 File.WriteAllText(settingsFile, json);
@@ -698,19 +743,20 @@ namespace LightWebBrowser
 
         private void ApplyDarkToControl(Control c, bool dark)
         {
-            if (c is ToolStrip ts)
+            if (c is ToolStrip)
             {
-                ts.RenderMode = ToolStripRenderMode.System;
-                foreach (ToolStripItem it in ts.Items)
-                {
-                    // no-op
-                }
+                // keep default rendering for ToolStrip
             }
             else
             {
-                c.BackColor = dark ? Color.FromArgb(45, 45, 45) : SystemColors.Control;
-                c.ForeColor = dark ? Color.White : SystemColors.ControlText;
+                try
+                {
+                    c.BackColor = dark ? Color.FromArgb(45, 45, 45) : SystemColors.Control;
+                    c.ForeColor = dark ? Color.White : SystemColors.ControlText;
+                }
+                catch { }
             }
+
             foreach (Control child in c.Controls)
                 ApplyDarkToControl(child, dark);
         }
@@ -725,7 +771,7 @@ namespace LightWebBrowser
             if (e.Control && e.KeyCode == Keys.T)
             {
                 e.Handled = true;
-                CreateNewTab(homepage, makeActive: true, incognito: incognitoMode);
+                CreateNewTab(homepage, true, incognitoMode);
             }
             // Ctrl+W close tab
             else if (e.Control && e.KeyCode == Keys.W)
@@ -767,7 +813,22 @@ namespace LightWebBrowser
                     var wv = GetActiveWebView();
                     if (wv?.CoreWebView2 != null)
                     {
-                        wv.CoreWebView2.FindAsync(tb.Text, false, false, false);
+                        try
+                        {
+                            string search = tb.Text ?? "";
+                            string script = "(function(){ try { return window.find(" + JsonConvert.SerializeObject(search) + "); } catch(e) { return false; } })();";
+                            wv.CoreWebView2.ExecuteScriptAsync(script).ContinueWith(t =>
+                            {
+                                string res = t.Result ?? "";
+                                bool found = (res.IndexOf("true", StringComparison.OrdinalIgnoreCase) >= 0);
+                                this.BeginInvoke(new Action(() =>
+                                {
+                                    if (!found)
+                                        MessageBox.Show("Text not found.", "Find", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                }));
+                            });
+                        }
+                        catch { }
                     }
                 };
                 f.Controls.Add(tb);
