@@ -29,6 +29,9 @@ jobs:
       - name: Install WebView2
         run: nuget install Microsoft.Web.WebView2 -Version 1.0.2592.51 -OutputDirectory packages
 
+      - name: Install Newtonsoft.Json
+        run: nuget install Newtonsoft.Json -Version 13.0.3 -OutputDirectory packages
+
       - name: Restore NuGet packages
         run: nuget restore "LightWebBrowser.sln"
 
