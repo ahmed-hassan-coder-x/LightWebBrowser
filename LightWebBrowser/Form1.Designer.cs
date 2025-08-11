@@ -67,7 +67,7 @@ namespace LightWebBrowser
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(65, 30);
             this.btnBack.TabIndex = 2;
-            this.btnBack.Text = "←";
+            this.btnBack.Text = "Back";
             this.btnBack.UseVisualStyleBackColor = true;
             this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
@@ -77,7 +77,7 @@ namespace LightWebBrowser
             this.btnForward.Name = "btnForward";
             this.btnForward.Size = new System.Drawing.Size(65, 30);
             this.btnForward.TabIndex = 3;
-            this.btnForward.Text = "→";
+            this.btnForward.Text = "Forward";
             this.btnForward.UseVisualStyleBackColor = true;
             this.btnForward.Click += new System.EventHandler(this.btnForward_Click);
             // 
@@ -87,7 +87,7 @@ namespace LightWebBrowser
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(75, 30);
             this.btnRefresh.TabIndex = 4;
-            this.btnRefresh.Text = "⟳";
+            this.btnRefresh.Text = "Refresh";
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
@@ -97,7 +97,7 @@ namespace LightWebBrowser
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(75, 30);
             this.btnStop.TabIndex = 5;
-            this.btnStop.Text = "✖";
+            this.btnStop.Text = "Stop";
             this.btnStop.UseVisualStyleBackColor = true;
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
@@ -107,7 +107,7 @@ namespace LightWebBrowser
             this.btnHome.Name = "btnHome";
             this.btnHome.Size = new System.Drawing.Size(75, 30);
             this.btnHome.TabIndex = 6;
-            this.btnHome.Text = "🏠";
+            this.btnHome.Text = "Home";
             this.btnHome.UseVisualStyleBackColor = true;
             this.btnHome.Click += new System.EventHandler(this.btnHome_Click);
             // 
@@ -118,7 +118,7 @@ namespace LightWebBrowser
             this.btnSettings.Name = "btnSettings";
             this.btnSettings.Size = new System.Drawing.Size(75, 30);
             this.btnSettings.TabIndex = 9;
-            this.btnSettings.Text = "⚙";
+            this.btnSettings.Text = "Settings";
             this.btnSettings.UseVisualStyleBackColor = true;
             this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
             // 
