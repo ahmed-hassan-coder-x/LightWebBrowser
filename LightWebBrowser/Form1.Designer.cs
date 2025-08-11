@@ -13,6 +13,7 @@ namespace LightWebBrowser
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.Button btnHome;
         private System.Windows.Forms.Button btnSettings;
+        private System.Windows.Forms.Button btnHistory;
         private System.Windows.Forms.ProgressBar progressBar1;
         private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
 
@@ -35,6 +36,7 @@ namespace LightWebBrowser
             this.btnStop = new System.Windows.Forms.Button();
             this.btnHome = new System.Windows.Forms.Button();
             this.btnSettings = new System.Windows.Forms.Button();
+            this.btnHistory = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
             ((System.ComponentModel.ISupportInitialize)(this.webView21)).BeginInit();
@@ -122,6 +124,17 @@ namespace LightWebBrowser
             this.btnSettings.UseVisualStyleBackColor = true;
             this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
             // 
+            // btnHistory
+            // 
+            this.btnHistory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnHistory.Location = new System.Drawing.Point(743, 45);
+            this.btnHistory.Name = "btnHistory";
+            this.btnHistory.Size = new System.Drawing.Size(75, 30);
+            this.btnHistory.TabIndex = 11;
+            this.btnHistory.Text = "History";
+            this.btnHistory.UseVisualStyleBackColor = true;
+            this.btnHistory.Click += new System.EventHandler(this.btnHistory_Click);
+            // 
             // progressBar1
             // 
             this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -147,6 +160,7 @@ namespace LightWebBrowser
             this.ClientSize = new System.Drawing.Size(911, 556);
             this.Controls.Add(this.webView21);
             this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.btnHistory);
             this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.btnHome);
             this.Controls.Add(this.btnStop);
