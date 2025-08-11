@@ -192,7 +192,8 @@ namespace LightWebBrowser
         
         private void btnSettings_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Settings not implemented yet.", "Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            SettingsForm settingsForm = new SettingsForm();
+            settingsForm.Show();
         }
 
         private void txtUrl_KeyDown(object sender, KeyEventArgs e)
