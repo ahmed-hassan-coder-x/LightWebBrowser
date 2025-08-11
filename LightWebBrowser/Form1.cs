@@ -4,11 +4,11 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
+using Newtonsoft.Json;
 
 namespace LightWebBrowser
 {
@@ -373,7 +373,7 @@ namespace LightWebBrowser
                 if (File.Exists(bookmarksFile))
                 {
                     var json = File.ReadAllText(bookmarksFile);
-                    bookmarks = JsonSerializer.Deserialize<List<string>>(json) ?? new List<string>();
+                    bookmarks = JsonConvert.DeserializeObject<List<string>>(json) ?? new List<string>();
                 }
                 UpdateBookmarksBar();
             }
@@ -384,7 +384,7 @@ namespace LightWebBrowser
         {
             try
             {
-                var json = JsonSerializer.Serialize(bookmarks, new JsonSerializerOptions { WriteIndented = true });
+                var json = JsonConvert.SerializeObject(bookmarks, Formatting.Indented);
                 File.WriteAllText(bookmarksFile, json);
             }
             catch { }
@@ -448,7 +448,7 @@ namespace LightWebBrowser
                     if (wv?.Source != null)
                         session.Add(wv.Source.ToString());
                 }
-                var json = JsonSerializer.Serialize(session, new JsonSerializerOptions { WriteIndented = true });
+                var json = JsonConvert.SerializeObject(session, Formatting.Indented);
                 File.WriteAllText(sessionFile, json);
             }
             catch { }
@@ -461,7 +461,7 @@ namespace LightWebBrowser
                 if (File.Exists(sessionFile))
                 {
                     var json = File.ReadAllText(sessionFile);
-                    var urls = JsonSerializer.Deserialize<List<string>>(json) ?? new List<string>();
+                    var urls = JsonConvert.DeserializeObject<List<string>>(json) ?? new List<string>();
                     tabControl.TabPages.Clear();
                     foreach (var u in urls)
                         CreateNewTab(u, makeActive: false, incognito: false);
@@ -583,7 +583,7 @@ namespace LightWebBrowser
             {
                 try
                 {
-                    return System.Text.Json.JsonSerializer.Deserialize<string>(json);
+                    return JsonConvert.DeserializeObject<string>(json);
                 }
                 catch { return json.Trim('"'); }
             }
@@ -650,7 +650,7 @@ namespace LightWebBrowser
                 if (File.Exists(settingsFile))
                 {
                     var json = File.ReadAllText(settingsFile);
-                    settings = JsonSerializer.Deserialize<AppSettings>(json) ?? new AppSettings();
+                    settings = JsonConvert.DeserializeObject<AppSettings>(json) ?? new AppSettings();
                 }
                 // apply
                 incognitoMode = settings.IncognitoByDefault;
@@ -676,7 +676,7 @@ namespace LightWebBrowser
                 settings.IncognitoByDefault = btnIncognito.Checked;
                 settings.PreferredSearch = comboSearchEngine.SelectedItem?.ToString() ?? "Google";
                 settings.DarkMode = btnDarkMode.Checked;
-                var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
+                var json = JsonConvert.SerializeObject(settings, Formatting.Indented);
                 File.WriteAllText(settingsFile, json);
             }
             catch { }
