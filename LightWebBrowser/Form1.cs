@@ -48,7 +48,6 @@ namespace LightWebBrowser
 
         private void CoreWebView2_NewWindowRequested(object sender, CoreWebView2NewWindowRequestedEventArgs e)
         {
-            // Open popups in the same WebView
             if (!string.IsNullOrEmpty(e.Uri))
             {
                 webView21.CoreWebView2.Navigate(e.Uri);
@@ -167,7 +166,6 @@ namespace LightWebBrowser
             }
             catch
             {
-                // fallback
                 if (!string.IsNullOrWhiteSpace(txtUrl.Text))
                     NavigateToPage(txtUrl.Text);
             }
@@ -181,7 +179,6 @@ namespace LightWebBrowser
             }
             catch
             {
-                // no-op
             }
         }
 
@@ -194,6 +191,39 @@ namespace LightWebBrowser
         {
             SettingsForm settingsForm = new SettingsForm();
             settingsForm.Show();
+        }
+
+        private void btnHistory_Click(object sender, EventArgs e)
+        {
+            if (history.Count == 0)
+            {
+                MessageBox.Show("No history available.", "History", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            using (Form historyForm = new Form())
+            {
+                historyForm.Text = "History";
+                historyForm.Size = new System.Drawing.Size(400, 300);
+
+                ListBox listBox = new ListBox
+                {
+                    Dock = DockStyle.Fill
+                };
+
+                listBox.Items.AddRange(history.ToArray());
+                listBox.DoubleClick += (s, args) =>
+                {
+                    if (listBox.SelectedItem != null)
+                    {
+                        NavigateToPage(listBox.SelectedItem.ToString());
+                        historyForm.Close();
+                    }
+                };
+
+                historyForm.Controls.Add(listBox);
+                historyForm.ShowDialog();
+            }
         }
 
         private void txtUrl_KeyDown(object sender, KeyEventArgs e)
