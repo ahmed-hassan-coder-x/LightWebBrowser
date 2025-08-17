@@ -29,7 +29,7 @@ Ultra-lightweight web browser designed for low-end and potato PCs. Minimal RAM a
 
 ## 📥 Installation (Soon)
 1. Download latest release
-2. Extract files
+2. Extract file's
 3. Run `LightWebBrowser.exe`
 
 ## 📝 License
